@@ -3,7 +3,7 @@ import { useWebSocket } from "../context/WebSocketContext";
 import { Users, Lock, Globe } from "lucide-react";
 
 const HomePage = ({ onViewChange }) => {
-  const {isConnected, lastMessage, sendMessage } = useWebSocket();
+  const { isConnected, lastMessage, sendMessage } = useWebSocket();
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const [showJoinRoom, setShowJoinRoom] = useState(false);
   const [roomName, setRoomName] = useState("");
@@ -41,17 +41,11 @@ const HomePage = ({ onViewChange }) => {
       //   break;
 
       case "error":
-        setError(payload.message);
+        setError(lastMessage?.message);
+        setShowJoinRoom(false);
         break;
     }
   }, [lastMessage, playerName]);
-
-  useEffect(() => {
-    // Request public rooms when component mounts
-    if (isConnected) {
-      sendMessage({ type: "getPublicRooms" });
-    }
-  }, [isConnected]);
 
   const handleCreateRoom = (isPrivate) => {
     if (!roomName.trim() || !playerName.trim()) {
