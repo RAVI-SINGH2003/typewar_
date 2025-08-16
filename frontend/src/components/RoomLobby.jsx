@@ -35,7 +35,7 @@ const RoomLobby = ({ roomData, playerData, onViewChange, onLeaveRoom }) => {
         alert(payload.message);
         break;
     }
-  }, [lastMessage, onViewChange, onLeaveRoom]);
+  }, [lastMessage]);
 
   const handleStartGame = () => {
     if (room.players.length < 2) {
