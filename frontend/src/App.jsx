@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import HomePage from './components/HomePage';
-import RoomLobby from './components/RoomLobby';
-import GamePlay from './components/GamePlay';
-import { WebSocketProvider } from './context/WebSocketContext';
+import React, { useState, useEffect } from "react";
+import HomePage from "./components/HomePage";
+import RoomLobby from "./components/RoomLobby";
+import GamePlay from "./components/GamePlay";
+import { WebSocketProvider } from "./context/WebSocketContext";
 
 function App() {
-  const [currentView, setCurrentView] = useState('home');
+  const [currentView, setCurrentView] = useState("home");
   const [roomData, setRoomData] = useState(null);
   const [playerData, setPlayerData] = useState(null);
 
@@ -18,27 +18,26 @@ function App() {
   };
 
   const handleLeaveRoom = () => {
-    setCurrentView('home');
+    setCurrentView("home");
+    console.log("here");
     setRoomData(null);
     setPlayerData(null);
   };
-
+  console.log({ currentView });
   return (
     <WebSocketProvider>
       <div className="min-h-screen bg-gray-50">
-        {currentView === 'home' && (
-          <HomePage onViewChange={handleViewChange} />
-        )}
-        {currentView === 'lobby' && (
-          <RoomLobby 
+        {currentView === "home" && <HomePage onViewChange={handleViewChange} />}
+        {currentView === "lobby" && (
+          <RoomLobby
             roomData={roomData}
             playerData={playerData}
             onViewChange={handleViewChange}
             onLeaveRoom={handleLeaveRoom}
           />
         )}
-        {currentView === 'game' && (
-          <GamePlay 
+        {currentView === "game" && (
+          <GamePlay
             roomData={roomData}
             playerData={playerData}
             onViewChange={handleViewChange}

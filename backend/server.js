@@ -1,9 +1,10 @@
 const express = require("express");
 const http = require("http");
 const WebSocket = require("ws");
-const mongoose = require("mongoose");
+const { connectDB } = require("./db/db");
 const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
+
 require("dotenv").config();
 
 const app = express();
@@ -14,31 +15,17 @@ const wss = new WebSocket.Server({ server });
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
-mongoose.connect(
-  process.env.MONGODB_URI || "mongodb://localhost:27017/typingrace",
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }
-);
+// DB connection
+connectDB();
 
 // Models
 const Room = require("./models/Room");
 const Player = require("./models/Player");
+const { SAMPLE_PARAGRAPHS } = require("./constants/data");
 
 // In-memory storage for active rooms and players
 const activeRooms = new Map();
 const activePlayers = new Map();
-
-// Sample paragraphs for typing
-const SAMPLE_PARAGRAPHS = [
-  "The quick brown fox jumps over the lazy dog while the sun sets behind the mountains. Birds chirp melodiously as evening approaches, creating a peaceful atmosphere that calms the mind and soothes the soul.",
-  "Technology has revolutionized the way we communicate and interact with each other. From smartphones to social media platforms, digital innovation continues to shape our daily lives in unprecedented ways.",
-  "Reading books expands our knowledge and imagination while improving our vocabulary and critical thinking skills. Literature transports us to different worlds and helps us understand diverse perspectives and cultures.",
-  "Cooking is both an art and a science that brings people together around shared meals. The combination of fresh ingredients, proper techniques, and creativity results in delicious dishes that nourish body and soul.",
-  "Exercise and physical activity are essential for maintaining good health and mental wellbeing. Regular movement strengthens muscles, improves cardiovascular function, and releases endorphins that boost mood and energy levels.",
-];
 
 // Generate random room code
 function generateRoomCode() {

@@ -3,21 +3,23 @@ import { useWebSocket } from "../context/WebSocketContext";
 import { Users, Lock, Globe } from "lucide-react";
 
 const HomePage = ({ onViewChange }) => {
-  const { sendMessage, lastMessage, isConnected } = useWebSocket();
+  const { isConnected, lastMessage, sendMessage } = useWebSocket();
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const [showJoinRoom, setShowJoinRoom] = useState(false);
   const [roomName, setRoomName] = useState("");
   const [playerName, setPlayerName] = useState("");
   const [roomCode, setRoomCode] = useState("");
-  const [publicRooms, setPublicRooms] = useState([]);
+  // const [publicRooms, setPublicRooms] = useState([]);
   const [error, setError] = useState("");
+
+  console.log({ playerName });
 
   useEffect(() => {
     if (!lastMessage) return;
 
     const { type, payload } = lastMessage;
 
-    console.log({ lastMessage });
+    // console.log({ lastMessage });
 
     switch (type) {
       case "roomCreated":
@@ -34,22 +36,16 @@ const HomePage = ({ onViewChange }) => {
         });
         break;
 
-      case "publicRooms":
-        setPublicRooms(payload);
-        break;
+      // case "publicRooms":
+      //   setPublicRooms(payload);
+      //   break;
 
       case "error":
-        setError(payload.message);
+        setError(lastMessage?.message);
+        setShowJoinRoom(false);
         break;
     }
   }, [lastMessage, playerName]);
-
-  useEffect(() => {
-    // Request public rooms when component mounts
-    if (isConnected) {
-      sendMessage({ type: "getPublicRooms" });
-    }
-  }, [isConnected, sendMessage]);
 
   const handleCreateRoom = (isPrivate) => {
     if (!roomName.trim() || !playerName.trim()) {
@@ -110,7 +106,7 @@ const HomePage = ({ onViewChange }) => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            TypeRace Multiplayer
+            TypeWar - A Multiplayer Typing Race Platform
           </h1>
           <p className="text-lg text-gray-600">
             Compete with friends in real-time typing competitions
