@@ -1,92 +1,94 @@
-import React, { useState, useEffect } from 'react';
-import { useWebSocket } from '../context/WebSocketContext';
-import { Users, Lock, Globe } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useWebSocket } from "../context/WebSocketContext";
+import { Users, Lock, Globe } from "lucide-react";
 
 const HomePage = ({ onViewChange }) => {
   const { sendMessage, lastMessage, isConnected } = useWebSocket();
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const [showJoinRoom, setShowJoinRoom] = useState(false);
-  const [roomName, setRoomName] = useState('');
-  const [playerName, setPlayerName] = useState('');
-  const [roomCode, setRoomCode] = useState('');
+  const [roomName, setRoomName] = useState("");
+  const [playerName, setPlayerName] = useState("");
+  const [roomCode, setRoomCode] = useState("");
   const [publicRooms, setPublicRooms] = useState([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!lastMessage) return;
 
     const { type, payload } = lastMessage;
 
+    console.log({ lastMessage });
+
     switch (type) {
-      case 'roomCreated':
-        onViewChange('lobby', {
+      case "roomCreated":
+        onViewChange("lobby", {
           room: payload.room,
-          player: { id: payload.playerId, name: playerName }
+          player: { id: payload.playerId, name: playerName },
         });
         break;
 
-      case 'roomJoined':
-        onViewChange('lobby', {
+      case "roomJoined":
+        onViewChange("lobby", {
           room: payload.room,
-          player: { id: payload.playerId, name: playerName }
+          player: { id: payload.playerId, name: playerName },
         });
         break;
 
-      case 'publicRooms':
+      case "publicRooms":
         setPublicRooms(payload);
         break;
 
-      case 'error':
+      case "error":
         setError(payload.message);
         break;
     }
-  }, [lastMessage, onViewChange, playerName]);
+  }, [lastMessage, playerName]);
 
   useEffect(() => {
     // Request public rooms when component mounts
     if (isConnected) {
-      sendMessage({ type: 'getPublicRooms' });
+      sendMessage({ type: "getPublicRooms" });
     }
   }, [isConnected, sendMessage]);
 
   const handleCreateRoom = (isPrivate) => {
     if (!roomName.trim() || !playerName.trim()) {
-      setError('Please fill in all fields');
+      setError("Please fill in all fields");
       return;
     }
 
-    setError('');
+    setError("");
     sendMessage({
-      type: 'createRoom',
+      type: "createRoom",
       payload: {
         roomName: roomName.trim(),
         isPrivate,
-        playerName: playerName.trim()
-      }
+        playerName: playerName.trim(),
+      },
     });
   };
 
   const handleJoinRoom = (code = roomCode) => {
     if (!code.trim() || !playerName.trim()) {
-      setError('Please fill in all fields');
+      setError("Please fill in all fields");
       return;
     }
 
-    setError('');
+    setError("");
     sendMessage({
-      type: 'joinRoom',
+      type: "joinRoom",
       payload: {
         roomCode: code.trim().toUpperCase(),
-        playerName: playerName.trim()
-      }
+        playerName: playerName.trim(),
+      },
     });
   };
 
   const resetForms = () => {
-    setRoomName('');
-    setPlayerName('');
-    setRoomCode('');
-    setError('');
+    setRoomName("");
+    setPlayerName("");
+    setRoomCode("");
+    setError("");
     setShowCreateRoom(false);
     setShowJoinRoom(false);
   };
@@ -313,10 +315,7 @@ const HomePage = ({ onViewChange }) => {
                 >
                   Join Room
                 </button>
-                <button
-                  onClick={resetForms}
-                  className="btn-secondary flex-1"
-                >
+                <button onClick={resetForms} className="btn-secondary flex-1">
                   Cancel
                 </button>
               </div>
